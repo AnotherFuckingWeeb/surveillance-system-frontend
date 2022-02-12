@@ -1,0 +1,152 @@
+import React, { useState, useEffect } from "react";
+import {
+  ScrollView,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  StatusBar,
+} from "react-native";
+import { Images } from "../../../assets";
+import { PrimaryButton } from "../../components/Button/PrimaryButton";
+import { SecondaryButton } from "../../components/Button/SecondaryButton";
+import { Information } from "../../components/Information";
+import { Loading } from "../../components/Loading";
+import { DeleteCamera, GetCamera } from "../../../axios";
+import { NavigationProps } from "../../Route/types";
+import { IState } from "./IState";
+import { styles } from "./styles";
+
+export const CameraInfo = ({
+  route,
+  navigation,
+}: NavigationProps<"CameraInfo">): JSX.Element => {
+  const [state, setState] = useState<IState>({
+    isEditable: false,
+    isModalVisible: false,
+    loading: false,
+    brand: "",
+    area: "",
+    description: "",
+  });
+
+  const fetchCamera = async (): Promise<void> => {
+    setState({ ...state, loading: true });
+
+    try {
+      await GetCamera(route.params.id).then((camera) => {
+        setState({
+          ...state,
+          brand: camera.brand,
+          area: camera.area,
+          description: camera.description,
+          loading: false,
+        });
+      });
+    } catch (error) {
+      console.error(error);
+      setState({
+        ...state,
+        loading: false,
+      });
+    }
+  };
+
+  const onHandleDelete = async (): Promise<void> => {
+    setState({
+      ...state,
+      loading: true,
+    });
+
+    try {
+      await DeleteCamera(route.params.id).then(() => {
+        setState({
+          ...state,
+          loading: false,
+        });
+
+        alert("La camara ha sido elimidada");
+        navigation.navigate("Dashboard");
+      });
+    } catch (error) {
+      setState({
+        ...state,
+        loading: true,
+      });
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCamera();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      {state.loading && <Loading />}
+      <ScrollView>
+        <View style={{ alignItems: "center", marginTop: 40 }}>
+          <Image style={styles.image} source={Images.camera} />
+          <Text style={styles.title}>{state.brand}</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <SecondaryButton
+            text={state.isEditable ? "Cancelar" : "Editar"}
+            color="primary"
+            OnPress={() =>
+              setState({
+                ...state,
+                isEditable: !state.isEditable,
+              })
+            }
+          />
+          <SecondaryButton
+            text="Eliminar"
+            color="secondary"
+            OnPress={onHandleDelete}
+          />
+        </View>
+        <Information
+          header="Modelo"
+          info={state.brand}
+          isEditable={state.isEditable}
+          type="default"
+          onChangeText={(text) => {
+            setState({
+              ...state,
+              brand: text,
+            });
+          }}
+        />
+        <Information
+          header="Area"
+          info={state.area}
+          isEditable={state.isEditable}
+          type="default"
+          onChangeText={(text) => {
+            setState({
+              ...state,
+              area: text,
+            });
+          }}
+        />
+        <Information
+          header="Descripcion"
+          info={state.description}
+          isEditable={state.isEditable}
+          type="default"
+          multiText
+          onChangeText={(text) => {
+            setState({
+              ...state,
+              description: text,
+            });
+          }}
+        />
+        <View style={{ marginTop: 10, alignSelf: "center" }}>
+          <PrimaryButton text="Guardar Cambios" />
+        </View>
+      </ScrollView>
+    </View>
+  );
+};

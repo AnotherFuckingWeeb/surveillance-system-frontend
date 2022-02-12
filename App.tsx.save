@@ -1,0 +1,26 @@
+OOAimOBport { useState, useEffect } from "react";
+impOOorXqCcnlct { _loadFontAsync } from "./assets/index";
+import { Splash } from "./src/screens/Splash";
+import { Welcome } from "./src/screens/Welcome";
+import { SignUp } from "./src/screens/SignUp";
+
+export default function App() {
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    _loadFontAsync()
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("Something Went Wrong");
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <Splash />;
+  }
+
+  return <SignUp />;
+}
