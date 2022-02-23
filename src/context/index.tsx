@@ -2,84 +2,82 @@ import React, {
   useState,
   useContext,
   createContext,
-  useMemo,
   FunctionComponent,
 } from "react";
-import { ContextType } from "./IContext";
 import { IUser } from "../../types/Types";
 import { Login, SignUp } from "../../axios";
-import * as SecureStore from "expo-secure-store";
+import * as SecureStorage from "expo-secure-store";
+import { IContext } from "./IContext";
 
-const UserContext = createContext<ContextType>({} as ContextType);
-
-const InitialState: IUser = { id: 0, dni: 0, role: 0, name: "", lastname: "" };
+const Context = createContext<IContext>({} as IContext);
 
 export const UserProvider: FunctionComponent = ({ children }): JSX.Element => {
-  const [user, setUser] = useState<IUser>(InitialState);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<IUser>({} as IUser);
 
-  const login = async (dni: number, password: string): Promise<void> => {
-    setLoading(true);
+  const login = async (
+    dni: number,
+    password: string
+  ): Promise<string | void> => {
+    try {
+      const response = await Login(dni, password);
 
-    await Login(dni, password).then(async (auth) => {
-      await SecureStore.setItemAsync("token", auth.token);
-      setUser({
-        id: auth.user.id,
-        role: auth.user.role,
-        dni: auth.user.dni,
-        name: auth.user.name,
-        lastname: auth.user.lastname,
-      });
-      setLoading(false);
-    });
+      if (response.user) {
+        console.log("recibiendo el user de la promesa", response.user);
+
+        await SecureStorage.setItemAsync("token", response.token);
+
+        setUser({
+          id: response.user.id,
+          dni: response.user.dni,
+          name: response.user.name,
+          lastname: response.user.lastname,
+          role: response.user.role,
+        });
+        console.log("actualizando el state", user);
+      } else {
+        console.log(response.message);
+      }
+
+      return response.message;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const signUp = async (
+  const signup = async (
     dni: number,
     name: string,
     lastname: string,
     password: string
-  ): Promise<void> => {
-    toggleLoading();
+  ): Promise<string> => {
+    try {
+      const response = await SignUp(dni, name, lastname, password);
 
-    await SignUp(dni, name, lastname, password).then(async (auth) => {
-      setUser(auth.user);
-      await SecureStore.setItemAsync("token", auth.token);
-      toggleLoading();
-    });
+      return response;
+    } catch (error) {
+      console.error(error);
+      return error.message;
+    }
   };
 
   const logout = async (): Promise<void> => {
-    toggleLoading();
-
-    await SecureStore.deleteItemAsync("token").then(() => {
-      setUser(InitialState);
-      toggleLoading();
+    await SecureStorage.deleteItemAsync("token");
+    setUser({
+      id: 0,
+      dni: 0,
+      name: "",
+      lastname: "",
+      role: 0,
     });
   };
 
-  const toggleLoading = (): void => {
-    setLoading(!loading);
-  };
-
-  const memoedValue = useMemo(
-    () => ({
-      user,
-      loading,
-      signUp,
-      login,
-      logout,
-      toggleLoading,
-    }),
-
-    [user, loading]
-  );
-
   return (
-    <UserContext.Provider value={memoedValue}>{children}</UserContext.Provider>
+    <Context.Provider value={{ user, login, signup, logout }}>
+      {children}
+    </Context.Provider>
   );
 };
 
 export const useUser = () => {
-  return useContext<ContextType>(UserContext);
+  return useContext(Context) as IContext;
 };

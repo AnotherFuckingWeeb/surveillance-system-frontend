@@ -11,7 +11,8 @@ export type RootStackParamList = {
   AddUser: undefined;
   CameraInfo: { id: number };
   UserInfo: { id: number };
-  Cameras: undefined;
+  Camera: { id: number };
+  Cameras: { redirectTo: "manage" | "watch" };
   Users: undefined;
   SucessAccount: undefined;
 };

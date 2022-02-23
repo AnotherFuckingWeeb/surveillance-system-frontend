@@ -3,11 +3,12 @@ import { View, Image, Text } from "react-native";
 import { CustomInput } from "../../components/CustomInput";
 import { PrimaryButton } from "../../components/Button/PrimaryButton";
 import { Loading } from "../../components/Loading";
+import { ResponseMessage } from "../../components/ResponseMessage";
 import { Images } from "../../../assets";
 import { NavigationProps } from "../../Route/types";
 import { IState } from "../Login/IState";
-import { styles } from "./styles";
 import { useUser } from "../../context";
+import { styles } from "./styles";
 
 export const Login = ({
   navigation,
@@ -15,31 +16,40 @@ export const Login = ({
   const [state, setState] = useState<IState>({
     dni: "",
     password: "",
+    responseMessage: "",
     loading: false,
   });
 
   const { login, user } = useUser();
 
-  const toggleLoading = () => {
+  const handleLogin = async (): Promise<void> => {
     setState({
       ...state,
-      loading: !state.loading,
+      loading: true,
     });
-  };
-
-  const Login = async (): Promise<void> => {
-    toggleLoading();
 
     try {
-      await login(parseInt(state.dni), state.password).then(() => {
-        toggleLoading();
+      const response = await login(parseInt(state.dni), state.password);
 
-        if (user.role === 0) navigation.navigate("Dashboard");
-        else navigation.navigate("Cameras");
-      });
+      if (!response) {
+        if (user.role === 1) {
+          navigation.navigate("Dashboard");
+        } else {
+          navigation.navigate("Cameras", { redirectTo: "watch" });
+        }
+      } else {
+        setState({
+          ...state,
+          responseMessage: response,
+          loading: false,
+        });
+      }
     } catch (error) {
-      toggleLoading();
       console.error(error);
+      setState({
+        ...state,
+        loading: false,
+      });
     }
   };
 
@@ -50,7 +60,14 @@ export const Login = ({
         <Image style={styles.image} source={Images.brandLogo} />
         <Text style={styles.title}>Iniciar sesión</Text>
       </View>
-      <View>
+      {state.responseMessage.length !== 0 && (
+        <ResponseMessage
+          image={Images.user}
+          sucess={false}
+          message={state.responseMessage}
+        />
+      )}
+      <View style={{ marginTop: 20 }}>
         <CustomInput
           label="Cédula de identidad"
           value={state.dni}
@@ -76,7 +93,7 @@ export const Login = ({
         />
       </View>
       <View style={{ flex: 0.5, justifyContent: "flex-end" }}>
-        <PrimaryButton text="Iniciar sesión" OnPress={Login} />
+        <PrimaryButton text="Iniciar sesión" OnPress={handleLogin} />
       </View>
     </View>
   );

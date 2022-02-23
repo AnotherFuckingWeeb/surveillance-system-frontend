@@ -12,7 +12,12 @@ import { PrimaryButton } from "../../components/Button/PrimaryButton";
 import { SecondaryButton } from "../../components/Button/SecondaryButton";
 import { Information } from "../../components/Information";
 import { Loading } from "../../components/Loading";
-import { DeleteCamera, GetCamera } from "../../../axios";
+import {
+  DeleteCamera,
+  GetCamera,
+  UpdateCamera,
+  UpdateUser,
+} from "../../../axios";
 import { NavigationProps } from "../../Route/types";
 import { IState } from "./IState";
 import { styles } from "./styles";
@@ -73,6 +78,34 @@ export const CameraInfo = ({
         ...state,
         loading: true,
       });
+      console.error(error);
+    }
+  };
+
+  const onHandleUpdate = async (): Promise<void> => {
+    setState({
+      ...state,
+      loading: false,
+    });
+
+    try {
+      UpdateCamera(
+        state.brand,
+        state.area,
+        state.description,
+        route.params.id
+      ).then((res) => {
+        setState({
+          ...state,
+          loading: false,
+        });
+      });
+    } catch (error) {
+      setState({
+        ...state,
+        loading: false,
+      });
+
       console.error(error);
     }
   };
@@ -144,7 +177,7 @@ export const CameraInfo = ({
           }}
         />
         <View style={{ marginTop: 10, alignSelf: "center" }}>
-          <PrimaryButton text="Guardar Cambios" />
+          <PrimaryButton text="Guardar Cambios" OnPress={onHandleUpdate} />
         </View>
       </ScrollView>
     </View>

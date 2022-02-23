@@ -5,9 +5,10 @@ import {
   Text,
   Image,
   StyleSheet,
-  StatusBar,
+  StatusBar as StatusBarDimensions,
 } from "react-native";
 import { Images } from "../../../assets";
+import { StatusBar } from "expo-status-bar";
 import { PrimaryButton } from "../../components/Button/PrimaryButton";
 import { SecondaryButton } from "../../components/Button/SecondaryButton";
 import { Information } from "../../components/Information";
@@ -18,6 +19,7 @@ import { GetUser, DeleteUser, UpdateUser } from "../../../axios";
 import { IState } from "./IState";
 import { NavigationProps } from "../../Route/types";
 import { ICamera } from "../../../types/Types";
+import { ResponseMessage } from "../../components/ResponseMessage";
 
 export const UserInfo = ({
   route,
@@ -32,21 +34,23 @@ export const UserInfo = ({
     lastname: "",
     dni: "",
     message: "",
-    password: "",
     cameras: [],
+    deletedCameras: [],
   });
 
   const fetchUser = async (): Promise<void> => {
     setState({ ...state, loading: true });
 
     try {
-      await GetUser(route.params.id).then((user) => {
+      await GetUser(route.params.id).then((res) => {
+        const { user, cameras } = res;
+
         setState({
           ...state,
           name: user.name,
           lastname: user.lastname,
           dni: user.dni.toString(),
-          password: user.password,
+          cameras: cameras ? cameras : [],
           loading: false,
         });
       });
@@ -74,32 +78,31 @@ export const UserInfo = ({
 
   const onHandleUpdate = async (): Promise<void> => {
     setState({ ...state, loading: true });
-
     try {
-      await UpdateUser(
+      const res = await UpdateUser(
         parseInt(state.dni),
         state.name,
         state.lastname,
+        state.cameras,
+        state.deletedCameras,
         route.params.id
-      ).then((message) => {
-        setState({
-          ...state,
-          message,
-          success: true,
-          loading: false,
-        });
+      );
 
-        fetchUser();
-      });
-    } catch (error) {
       setState({
         ...state,
-        message: error.message,
-        success: false,
+        message: res,
+        success: true,
         loading: false,
       });
-
+    } catch (error) {
       console.error(error);
+
+      setState({
+        ...state,
+        message: error,
+        success: true,
+        loading: false,
+      });
     }
   };
 
@@ -109,8 +112,31 @@ export const UserInfo = ({
     });
 
     if (chosenCamera) {
-      alert("");
+      alert(`${chosenCamera.area} ya ha sido asignado a este usuario`);
+      return;
     }
+
+    setState({
+      ...state,
+      cameras: [...state.cameras, newCamera],
+      isModalVisible: false,
+    });
+  };
+
+  const popCamera = (id: number): void => {
+    const deletedCamera = state.cameras.filter((camera) => {
+      return camera.id === id;
+    });
+
+    const _cameras = state.cameras.filter((camera) => {
+      return camera.id !== id;
+    });
+
+    setState({
+      ...state,
+      cameras: _cameras,
+      deletedCameras: [...state.deletedCameras, ...deletedCamera],
+    });
   };
 
   useEffect(() => {
@@ -120,40 +146,32 @@ export const UserInfo = ({
   return (
     <View style={styles.container}>
       {state.loading && <Loading />}
-      <DataListModal
-        header="Asignar Camaras"
-        elementImage={Images.camera}
-        isModalVisible={state.isModalVisible}
-        onClose={() =>
-          setState({
-            ...state,
-            isModalVisible: false,
-          })
-        }
-        onPressElement={(data) => {
-          const existingCamera = state.cameras.find((camera) => {
-            return camera.id === data.id;
-          });
-
-          if (existingCamera) {
-            alert(`${existingCamera.area} ya ha sido asignado a este usuario`);
-            return;
+      {state.cameras !== null && (
+        <DataListModal
+          header="Asignar Camaras"
+          elementImage={Images.camera}
+          isModalVisible={state.isModalVisible}
+          onClose={() =>
+            setState({
+              ...state,
+              isModalVisible: false,
+            })
           }
-
-          console.log(data);
-
-          setState({
-            ...state,
-            cameras: [...state.cameras, data],
-            isModalVisible: false,
-          });
-        }}
-      />
+          onPressElement={pushCamera}
+        />
+      )}
       <ScrollView>
         <View style={{ alignItems: "center", marginTop: 40 }}>
           <Image style={styles.image} source={Images.user} />
           <Text style={styles.title}>{`${state.name} ${state.lastname}`}</Text>
         </View>
+        {state.message.length !== 0 && (
+          <ResponseMessage
+            message={state.message}
+            image={Images.user}
+            sucess={state.success}
+          />
+        )}
         <View style={styles.buttonContainer}>
           <SecondaryButton
             text={state.isEditable ? "Cancelar" : "Editar"}
@@ -207,18 +225,6 @@ export const UserInfo = ({
             });
           }}
         />
-        <Information
-          header="Contrase;a"
-          info={state.password}
-          isEditable={state.isEditable}
-          type="default"
-          onChangeText={(text) => {
-            setState({
-              ...state,
-              password: text,
-            });
-          }}
-        />
         <ElementList
           readOnly={state.isEditable}
           header="Camaras asignadas"
@@ -230,19 +236,13 @@ export const UserInfo = ({
               isModalVisible: true,
             });
           }}
-          onPressCancellableButton={(id: number) => {
-            setState({
-              ...state,
-              cameras: state.cameras.filter((camera) => {
-                return camera.id !== id;
-              }),
-            });
-          }}
+          onPressCancellableButton={popCamera}
         />
         <View style={{ marginTop: 10, alignSelf: "center" }}>
           <PrimaryButton text="Guardar Cambios" OnPress={onHandleUpdate} />
         </View>
       </ScrollView>
+      <StatusBar animated backgroundColor="#FFF" />
     </View>
   );
 };
@@ -250,7 +250,7 @@ export const UserInfo = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
+    paddingTop: StatusBarDimensions.currentHeight,
     paddingHorizontal: 10,
     paddingVertical: 10,
   },

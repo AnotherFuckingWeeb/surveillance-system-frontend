@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IUser, ICamera, IAuthResponse } from "../types/Types";
+import { IUser, ICamera, IAuthResponse, IUserInfo } from "../types/Types";
 import * as SecureStorage from "expo-secure-store";
 
 const ROOT_URL: string = "http://192.168.0.103:8080";
@@ -8,12 +8,18 @@ export const Login = async (
   dni: number,
   password: string
 ): Promise<IAuthResponse> => {
-  const response = await axios.post(`${ROOT_URL}/login/`, {
-    dni,
-    password,
-  });
+  return new Promise(async (resolve, reject) => {
+    const response = await axios.post(`${ROOT_URL}/login/`, {
+      dni,
+      password,
+    });
 
-  return response.data;
+    if (response) {
+      resolve(response.data);
+    } else {
+      reject("something went wrong");
+    }
+  });
 };
 
 export const SignUp = async (
@@ -21,7 +27,7 @@ export const SignUp = async (
   name: string,
   lastname: string,
   password: string
-): Promise<IAuthResponse> => {
+): Promise<string> => {
   const response = await axios.post(`${ROOT_URL}/signup/`, {
     dni,
     name,
@@ -29,7 +35,7 @@ export const SignUp = async (
     password,
   });
 
-  return response.data;
+  return response.data.message;
 };
 
 export const GetUsers = async (): Promise<IUser[]> => {
@@ -38,7 +44,7 @@ export const GetUsers = async (): Promise<IUser[]> => {
   return response.data.users;
 };
 
-export const GetUser = async (id: number): Promise<IUser> => {
+export const GetUser = async (id: number): Promise<IUserInfo> => {
   const token = await SecureStorage.getItemAsync("token");
 
   const response = await axios.get(`${ROOT_URL}/api/admin/user`, {
@@ -50,7 +56,12 @@ export const GetUser = async (id: number): Promise<IUser> => {
     },
   });
 
-  return response.data.user;
+  const { user, cameras } = response.data;
+
+  return {
+    user,
+    cameras,
+  };
 };
 
 export const CreateUser = async (
@@ -83,6 +94,8 @@ export const UpdateUser = async (
   dni: number,
   name: string,
   lastname: string,
+  assignedCameras: ICamera[],
+  removedCameras: ICamera[],
   id: number
 ): Promise<string> => {
   const token = await SecureStorage.getItemAsync("token");
@@ -93,6 +106,8 @@ export const UpdateUser = async (
       dni,
       name,
       lastname,
+      assignedCameras,
+      removedCameras,
     },
     {
       params: {
@@ -125,13 +140,26 @@ export const DeleteUser = async (id: number): Promise<string> => {
 export const GetCameras = async (): Promise<ICamera[]> => {
   const token = await SecureStorage.getItemAsync("token");
 
-  const response = await axios.get(`${ROOT_URL}/api/cameras/`, {
+  const response = await axios.get(`${ROOT_URL}/api/admin/cameras/`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  console.log(response.data);
+  return response.data.cameras;
+};
+
+export const GetCamerasByUid = async (uid: number): Promise<ICamera[]> => {
+  const token = await SecureStorage.getItemAsync("token");
+
+  const response = await axios.get(`${ROOT_URL}/api/cameras`, {
+    params: {
+      uid,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   return response.data.cameras;
 };
@@ -185,4 +213,44 @@ export const DeleteCamera = async (id: number): Promise<string> => {
   });
 
   return response.data.message;
+};
+
+export const UpdateCamera = async (
+  brand: string,
+  area: string,
+  description: string,
+  id: number
+): Promise<string> => {
+  const token = await SecureStorage.getItemAsync("token");
+  const response = await axios.put(
+    `${ROOT_URL}/api/admin/camera`,
+    {
+      brand,
+      area,
+      description,
+    },
+    {
+      params: {
+        id,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data.message;
+};
+
+export const GetStats = async (): Promise<{
+  users: number;
+  cameras: number;
+}> => {
+  let users = (await GetUsers()).length;
+  let cameras = (await GetCameras()).length;
+
+  return {
+    users,
+    cameras,
+  };
 };

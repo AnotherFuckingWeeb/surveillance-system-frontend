@@ -28,6 +28,22 @@ export const AddUser = ({
   const onHandleSignUp = async (): Promise<void> => {
     setState({ ...state, loading: true });
 
+    if (
+      state.dni === "" ||
+      state.name === "" ||
+      state.lastname === "" ||
+      state.password === ""
+    ) {
+      setState({
+        ...state,
+        message: "Rellene todos los campos",
+        success: false,
+        loading: false,
+      });
+
+      return;
+    }
+
     try {
       await CreateUser(
         parseInt(state.dni),

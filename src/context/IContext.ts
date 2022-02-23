@@ -1,15 +1,13 @@
 import { IUser } from "../../types/Types";
 
-export interface ContextType {
+export interface IContext {
   user: IUser;
-  loading: boolean;
-  login: (dni: number, password: string) => Promise<void>;
-  signUp: (
+  login: (dni: number, password: string) => Promise<string | void>;
+  signup: (
     dni: number,
     name: string,
     lastname: string,
     password: string
-  ) => Promise<void>;
+  ) => Promise<string>;
   logout: () => Promise<void>;
-  toggleLoading: () => void;
 }

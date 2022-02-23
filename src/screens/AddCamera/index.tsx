@@ -29,6 +29,17 @@ export const AddCamera = ({
       loading: true,
     });
 
+    if (state.brand === "" || state.area === "") {
+      setState({
+        ...state,
+        message: "Rellene todos los campos",
+        success: false,
+        loading: false,
+      });
+
+      return;
+    }
+
     try {
       await CreateCamera(state.brand, state.area, state.description).then(
         (message) => {

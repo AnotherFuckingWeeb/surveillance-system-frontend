@@ -50,7 +50,7 @@ export const DataListModal: FunctionComponent<IProps> = ({
     try {
       await GetCameras().then((cameras) => {
         setState({
-          cameras,
+          cameras: cameras ? cameras : [],
           loading: false,
         });
       });

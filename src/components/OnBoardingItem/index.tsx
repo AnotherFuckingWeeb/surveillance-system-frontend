@@ -10,7 +10,6 @@ import { PrimaryButton } from "../../components/Button/PrimaryButton";
 import { CustomInput } from "../../components/CustomInput";
 import { Loading } from "../../components/Loading";
 import { IProps } from "./IProps";
-import { useUser } from "../../context";
 
 export const OnBoardingItem: FunctionComponent<IProps> = ({
   image,
@@ -21,8 +20,7 @@ export const OnBoardingItem: FunctionComponent<IProps> = ({
   onFinishCallback,
 }): JSX.Element => {
   const { width } = useWindowDimensions();
-
-  const { loading } = useUser();
+  const [loading, setLoading] = useState<boolean>();
 
   return (
     <View style={[styles.container, { width }]}>
@@ -48,6 +46,7 @@ export const OnBoardingItem: FunctionComponent<IProps> = ({
       <PrimaryButton
         text={end ? "Crear Administrador" : "Continuar"}
         OnPress={() => {
+          setLoading(true);
           if (end) onFinishCallback();
           scrollTo();
         }}

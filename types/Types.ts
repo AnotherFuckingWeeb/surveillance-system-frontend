@@ -4,7 +4,6 @@ export interface IUser {
   dni: number;
   name: string;
   lastname: string;
-  password: string;
 }
 
 export interface ICamera {
@@ -16,6 +15,12 @@ export interface ICamera {
 }
 
 export interface IAuthResponse {
+  message: string;
   token: string;
   user: IUser;
+}
+
+export interface IUserInfo {
+  user: IUser;
+  cameras: ICamera[];
 }

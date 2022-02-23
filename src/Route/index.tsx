@@ -13,6 +13,7 @@ import { AddUser } from "../screens/AddUser";
 import { CameraInfo } from "../screens/CameraInfo";
 import { UserInfo } from "../screens/UserInfo";
 import { Cameras } from "../screens/Cameras";
+import { Camera } from "../screens/Camera";
 import { Users } from "../screens/Users";
 import { Splash } from "../screens/Splash";
 import { SucessAccount } from "../screens/SucessAccount";
@@ -48,6 +49,7 @@ export const Route = () => {
         <Stack.Screen name="Cameras" component={Cameras} />
         <Stack.Screen name="Users" component={Users} />
         <Stack.Screen name="SucessAccount" component={SucessAccount} />
+        <Stack.Screen name="Camera" component={Camera} />
       </Stack.Navigator>
     </NavigationContainer>
   );

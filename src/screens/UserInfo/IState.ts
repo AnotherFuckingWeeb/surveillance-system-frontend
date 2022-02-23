@@ -6,9 +6,9 @@ export interface IState {
   loading: boolean;
   success: boolean;
   cameras: ICamera[];
+  deletedCameras: ICamera[];
   dni: string;
   name: string;
   lastname: string;
-  password: string;
   message: string;
 }

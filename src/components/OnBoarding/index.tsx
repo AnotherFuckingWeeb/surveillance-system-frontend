@@ -4,8 +4,8 @@ import { OnBoardingItem } from "../OnBoardingItem";
 import { Paginator } from "../Paginator";
 import { ISlices } from "./IProps";
 import { Images } from "../../../assets";
-import { useUser } from "../../context";
 import { IProps } from "./IProps";
+import { useUser } from "../../context";
 
 export const OnBoarding = ({ navProps }: IProps): JSX.Element => {
   const [state, setState] = useState({
@@ -15,7 +15,7 @@ export const OnBoarding = ({ navProps }: IProps): JSX.Element => {
     password: "",
   });
 
-  const { signUp } = useUser();
+  const { signup, user } = useUser();
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -113,16 +113,17 @@ export const OnBoarding = ({ navProps }: IProps): JSX.Element => {
 
   const onFinishCallback = async (): Promise<void> => {
     try {
-      signUp(
+      await signup(
         parseInt(state.dni),
         state.name,
         state.lastname,
         state.password
-      ).then(() => {
-        navProps.navigation.navigate("SucessAccount");
+      ).then((res) => {
+        alert(res);
+        navProps.navigation.navigate("Login");
       });
     } catch (error) {
-      Alert.alert("Hubo un error", "Hubo un error");
+      console.error(error);
     }
   };
 
