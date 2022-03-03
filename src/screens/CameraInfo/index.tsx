@@ -70,7 +70,7 @@ export const CameraInfo = ({
           loading: false,
         });
 
-        alert("La camara ha sido elimidada");
+        alert("La cámara ha sido eliminada");
         navigation.navigate("Dashboard");
       });
     } catch (error) {
@@ -164,7 +164,7 @@ export const CameraInfo = ({
           }}
         />
         <Information
-          header="Descripcion"
+          header="Descripción"
           info={state.description}
           isEditable={state.isEditable}
           type="default"

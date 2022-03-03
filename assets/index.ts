@@ -1,26 +1,18 @@
 import * as Font from "expo-font";
+import { ROOT_URL } from "../axios";
 
 const customFonts = {
-  "OpenSans-Regular":
-    "http://192.168.0.103:8080/public/fonts/OpenSans-Regular.ttf",
-  "OpenSans-Bold": "http://192.168.0.103:8080/public/fonts/OpenSans-Bold.ttf",
-  "OpenSans-Light": "http://192.168.0.103:8080/public/fonts/OpenSans-Light.ttf",
-  "OpenSans-LightItalic":
-    "http://192.168.0.103:8080/public/fonts/OpenSans-LightItalic.ttf",
-  "OpenSans-Italic":
-    "http://192.168.0.103:8080/public/fonts/OpenSans-Italic.ttf",
-  "OpenSans-SemiBold":
-    "http://192.168.0.103:8080/public/fonts/OpenSans-SemiBold.ttf",
-  "OpenSans-SemiBoldItalic":
-    "http://192.168.0.103:8080/public/fonts/OpenSans-SemiBoldItalic.ttf",
-  "OpenSans-Medium":
-    "http://192.168.0.103:8080/public/fonts/OpenSans-Medium.ttf",
-  "OpenSans-MediumItalic":
-    "http://192.168.0.103:8080/public/fonts/OpenSans-MediumItalic.ttf",
-  "OpenSans-ExtraBold":
-    "http://192.168.0.103:8080/public/fonts/OpenSans-ExtraBold.ttf",
-  "OpenSans-ExtraBoldItalic":
-    "http://192.168.0.103:8080/public/fonts/OpenSans-ExtraBoldItalic.ttf",
+  "OpenSans-Regular": `${ROOT_URL}/public/fonts/OpenSans-Regular.ttf`,
+  "OpenSans-Bold": `${ROOT_URL}/public/fonts/OpenSans-Bold.ttf`,
+  "OpenSans-Light": `${ROOT_URL}/public/fonts/OpenSans-Light.ttf`,
+  "OpenSans-LightItalic": `${ROOT_URL}/public/fonts/OpenSans-LightItalic.ttf`,
+  "OpenSans-Italic": `${ROOT_URL}/public/fonts/OpenSans-Italic.ttf`,
+  "OpenSans-SemiBold": `${ROOT_URL}/public/fonts/OpenSans-SemiBold.ttf`,
+  "OpenSans-SemiBoldItalic": `${ROOT_URL}/public/fonts/OpenSans-SemiBoldItalic.ttf`,
+  "OpenSans-Medium": `${ROOT_URL}/public/fonts/OpenSans-Medium.ttf`,
+  "OpenSans-MediumItalic": `${ROOT_URL}/public/fonts/OpenSans-MediumItalic.ttf`,
+  "OpenSans-ExtraBold": `${ROOT_URL}/public/fonts/OpenSans-ExtraBold.ttf`,
+  "OpenSans-ExtraBoldItalic": `${ROOT_URL}/public/fonts/OpenSans-ExtraBoldItalic.ttf`,
 };
 
 export const Images = {

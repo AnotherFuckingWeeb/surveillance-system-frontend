@@ -2,7 +2,7 @@ import axios from "axios";
 import { IUser, ICamera, IAuthResponse, IUserInfo } from "../types/Types";
 import * as SecureStorage from "expo-secure-store";
 
-const ROOT_URL: string = "http://192.168.0.103:8080";
+export const ROOT_URL: string = "http://192.168.0.101:8080";
 
 export const Login = async (
   dni: number,
@@ -240,17 +240,4 @@ export const UpdateCamera = async (
   );
 
   return response.data.message;
-};
-
-export const GetStats = async (): Promise<{
-  users: number;
-  cameras: number;
-}> => {
-  let users = (await GetUsers()).length;
-  let cameras = (await GetCameras()).length;
-
-  return {
-    users,
-    cameras,
-  };
 };

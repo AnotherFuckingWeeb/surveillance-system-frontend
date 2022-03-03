@@ -5,5 +5,6 @@ export interface IProps {
   isModalVisible: boolean;
   elementImage: ImageProps;
   onPressElement: (data: any) => void;
+  onAssignAll: () => void;
   onClose: () => void;
 }

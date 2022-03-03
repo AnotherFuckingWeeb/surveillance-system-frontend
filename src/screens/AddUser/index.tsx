@@ -118,10 +118,10 @@ export const AddUser = ({
           }}
         />
         <CustomInput
-          label="Contrase;a"
+          label="Contraseña"
           value={state.password}
           type="default"
-          placeholder="Contrase;a del vigilante"
+          placeholder="Contraseña del vigilante"
           onChangeText={(text) => {
             setState({ ...state, password: text });
           }}

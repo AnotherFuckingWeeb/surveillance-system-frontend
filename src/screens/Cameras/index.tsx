@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  Button,
+} from "react-native";
 import { NavigationProps } from "../../Route/types";
 import { StatusBar } from "expo-status-bar";
 import { Images } from "../../../assets";
@@ -17,7 +24,7 @@ export const Cameras = ({ route, navigation }: NavigationProps<"Cameras">) => {
     loading: false,
   });
 
-  const { user } = useUser();
+  const { user, logout } = useUser();
 
   const fetchCameras = async (): Promise<void> => {
     setState({
@@ -77,10 +84,30 @@ export const Cameras = ({ route, navigation }: NavigationProps<"Cameras">) => {
     }
   };
 
+  const onHandleLogout = async (): Promise<void> => {
+    await logout().then(() => {
+      navigation.navigate("Login");
+    });
+  };
+
   const CameraList = (): JSX.Element => {
     return (
       <View style={{ alignItems: "center" }}>
-        <Text style={{ fontSize: 28, color: "white" }}>Camaras</Text>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={{ fontSize: 28, color: "white", marginRight: 40 }}>
+            Cámaras
+          </Text>
+          {user.role === 0 && (
+            <Button title="Cerrar Sesión" onPress={onHandleLogout} />
+          )}
+        </View>
         <ScrollView>
           {state.cameras.map((camera, index): JSX.Element => {
             return (
@@ -112,7 +139,7 @@ export const Cameras = ({ route, navigation }: NavigationProps<"Cameras">) => {
       {state.cameras ? (
         <CameraList />
       ) : (
-        <EmptyPlaceholder text="No hay camaras disponibles" />
+        <EmptyPlaceholder text="No hay cámaras disponibles" />
       )}
       <StatusBar animated backgroundColor="#23396F" />
     </View>

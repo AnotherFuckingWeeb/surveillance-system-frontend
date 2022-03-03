@@ -15,7 +15,7 @@ import { Information } from "../../components/Information";
 import { ElementList } from "../../components/ElementList";
 import { DataListModal } from "../../components/DataListModal";
 import { Loading } from "../../components/Loading";
-import { GetUser, DeleteUser, UpdateUser } from "../../../axios";
+import { GetUser, DeleteUser, UpdateUser, GetCameras } from "../../../axios";
 import { IState } from "./IState";
 import { NavigationProps } from "../../Route/types";
 import { ICamera } from "../../../types/Types";
@@ -139,6 +139,20 @@ export const UserInfo = ({
     });
   };
 
+  const assignCameras = async (): Promise<void> => {
+    try {
+      const response = await GetCameras();
+
+      setState({
+        ...state,
+        cameras: response,
+        isModalVisible: false,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchUser();
   }, []);
@@ -148,7 +162,7 @@ export const UserInfo = ({
       {state.loading && <Loading />}
       {state.cameras !== null && (
         <DataListModal
-          header="Asignar Camaras"
+          header="Asignar Cámaras"
           elementImage={Images.camera}
           isModalVisible={state.isModalVisible}
           onClose={() =>
@@ -158,6 +172,7 @@ export const UserInfo = ({
             })
           }
           onPressElement={pushCamera}
+          onAssignAll={assignCameras}
         />
       )}
       <ScrollView>
@@ -190,7 +205,7 @@ export const UserInfo = ({
           />
         </View>
         <Information
-          header="Cedula de identidad"
+          header="Cédula de identidad"
           info={state.dni.toString()}
           isEditable={state.isEditable}
           type="numeric"
@@ -227,7 +242,7 @@ export const UserInfo = ({
         />
         <ElementList
           readOnly={state.isEditable}
-          header="Camaras asignadas"
+          header="Cámaras asignadas"
           dataIcon={Images.camera}
           cameras={state.cameras}
           onPressButton={() => {

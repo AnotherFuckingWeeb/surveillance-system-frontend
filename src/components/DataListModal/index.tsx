@@ -1,5 +1,12 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
-import { Modal, View, ScrollView, Image, Text } from "react-native";
+import {
+  Modal,
+  View,
+  ScrollView,
+  Image,
+  Text,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { DataModalElement } from "../DataModalElement";
 import { GetCameras } from "../../../axios";
@@ -11,6 +18,7 @@ export const DataListModal: FunctionComponent<IProps> = ({
   elementImage,
   isModalVisible,
   onPressElement,
+  onAssignAll,
   onClose,
 }): JSX.Element => {
   const [state, setState] = useState<IState>({
@@ -32,11 +40,28 @@ export const DataListModal: FunctionComponent<IProps> = ({
         }}
       >
         <Text style={{ fontSize: 20, color: "white" }}>{header}</Text>
-        <Ionicons
-          style={{ fontSize: 24, color: "white" }}
-          name="close"
-          onPress={onClose}
-        />
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <TouchableWithoutFeedback onPress={onAssignAll}>
+            <View
+              style={{ padding: 5, backgroundColor: "white", marginRight: 10 }}
+            >
+              <Text style={{ fontSize: 12, color: "#23396F" }}>
+                Asignar todo
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
+          <Ionicons
+            style={{ fontSize: 24, color: "white" }}
+            name="close"
+            onPress={onClose}
+          />
+        </View>
       </View>
     );
   };

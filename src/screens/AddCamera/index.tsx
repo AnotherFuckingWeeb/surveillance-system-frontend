@@ -40,25 +40,16 @@ export const AddCamera = ({
       return;
     }
 
-    try {
-      await CreateCamera(state.brand, state.area, state.description).then(
-        (message) => {
-          setState({
-            ...state,
-            message,
-            success: true,
-            loading: false,
-          });
-        }
-      );
-    } catch (error) {
-      setState({
-        ...state,
-        message: error.message,
-        success: false,
-        loading: false,
-      });
-    }
+    await CreateCamera(state.brand, state.area, state.description).then(
+      (res) => {
+        setState({
+          ...state,
+          message: res,
+          success: true,
+          loading: false,
+        });
+      }
+    );
   };
 
   return (
@@ -80,7 +71,7 @@ export const AddCamera = ({
           label="Modelo"
           value={state.brand}
           type="default"
-          placeholder="Modelo de la camara"
+          placeholder="Modelo de la cámara"
           onChangeText={(text) => {
             setState({
               ...state,
@@ -92,16 +83,16 @@ export const AddCamera = ({
           label="Area"
           value={state.area}
           type="default"
-          placeholder="Localidad de la camara"
+          placeholder="Localidad de la cámara"
           onChangeText={(text) => {
             setState({ ...state, area: text });
           }}
         />
         <DescriptionInput
-          label="Descripcion"
+          label="Descripción"
           value={state.description}
           type="default"
-          placeholder="Agrega una descriptcon"
+          placeholder="Agrega una descripción"
           onChangeText={(text) => {
             setState({
               ...state,
@@ -110,7 +101,7 @@ export const AddCamera = ({
           }}
         />
       </View>
-      <PrimaryButton text="Agregar Camara" OnPress={onHandleCreateCamera} />
+      <PrimaryButton text="Agregar Cámara" OnPress={onHandleCreateCamera} />
     </View>
   );
 };

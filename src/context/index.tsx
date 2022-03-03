@@ -4,7 +4,7 @@ import React, {
   createContext,
   FunctionComponent,
 } from "react";
-import { IUser } from "../../types/Types";
+import { IUser, ICamera } from "../../types/Types";
 import { Login, SignUp } from "../../axios";
 import * as SecureStorage from "expo-secure-store";
 import { IContext } from "./IContext";
@@ -13,6 +13,7 @@ const Context = createContext<IContext>({} as IContext);
 
 export const UserProvider: FunctionComponent = ({ children }): JSX.Element => {
   const [user, setUser] = useState<IUser>({} as IUser);
+  const [cameras, setCameras] = useState<ICamera[]>([]);
 
   const login = async (
     dni: number,
@@ -71,8 +72,14 @@ export const UserProvider: FunctionComponent = ({ children }): JSX.Element => {
     });
   };
 
+  const addCamera = (newCamera: ICamera): void => {
+    setCameras([...cameras, newCamera]);
+  };
+
   return (
-    <Context.Provider value={{ user, login, signup, logout }}>
+    <Context.Provider
+      value={{ user, cameras, addCamera, login, signup, logout }}
+    >
       {children}
     </Context.Provider>
   );

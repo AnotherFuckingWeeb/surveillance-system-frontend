@@ -67,7 +67,7 @@ export const Users = ({ route, navigation }: NavigationProps<"Cameras">) => {
       {state.users ? (
         <UserList />
       ) : (
-        <EmptyPlaceholder text="No hay usuarios disponibles" />
+        <EmptyPlaceholder text="No hay vigilantes disponibles" />
       )}
       <StatusBar animated backgroundColor="#23396F" />
     </View>

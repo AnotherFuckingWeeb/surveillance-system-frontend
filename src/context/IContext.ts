@@ -1,8 +1,10 @@
-import { IUser } from "../../types/Types";
+import { IUser, ICamera } from "../../types/Types";
 
 export interface IContext {
   user: IUser;
+  cameras: ICamera[];
   login: (dni: number, password: string) => Promise<string | void>;
+  addCamera: (newCamera: ICamera) => void;
   signup: (
     dni: number,
     name: string,
