@@ -5,4 +5,5 @@ export interface IProps {
   header: string;
   subHeader?: string;
   onPress: () => void;
+  inoperable?: boolean;
 }

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { Images } from "../../../assets";
 import { DashboardButton } from "../../components/DashboardButton";
 import { SecondaryButton } from "../../components/Button/SecondaryButton";
 import { IProps } from "../../components/DashboardButton/IProps";
+import { NotificationModal } from "../../components/NotificationModal/";
 import { NavigationProps } from "../../Route/types";
 import { useUser } from "../../context";
 import { styles } from "./styles";
@@ -11,6 +12,8 @@ import { styles } from "./styles";
 export const Dashboard = ({
   navigation,
 }: NavigationProps<"Dashboard">): JSX.Element => {
+  const [showModal, setShowModal] = useState<boolean>(true);
+
   const { logout } = useUser();
 
   const DashButtons: Array<IProps> = [
@@ -23,6 +26,16 @@ export const Dashboard = ({
       image: Images.user,
       text: "Agregar vigilante",
       onPress: () => navigation.navigate("AddUser"),
+    },
+    {
+      image: Images.user,
+      text: "Crear Reporte",
+      onPress: () => navigation.navigate("CreateReport"),
+    },
+    {
+      image: Images.user,
+      text: "Reportes",
+      onPress: () => navigation.navigate("Reports"),
     },
     {
       image: Images.camera,
@@ -55,6 +68,7 @@ export const Dashboard = ({
 
   return (
     <View style={styles.container}>
+      <NotificationModal />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ alignItems: "center" }}

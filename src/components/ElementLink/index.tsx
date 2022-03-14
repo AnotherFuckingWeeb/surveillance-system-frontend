@@ -8,15 +8,36 @@ export const ElementLink: FunctionComponent<IProps> = ({
   header,
   subHeader,
   onPress,
+  inoperable,
 }) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={[styles.card, styles.elevation]}>
+      <View
+        style={[
+          styles.card,
+          styles.elevation,
+          { backgroundColor: inoperable ? "red" : "white" },
+        ]}
+      >
         <View style={{ display: "flex", flexDirection: "row" }}>
           <Image style={styles.image} source={image} />
           <View style={{ marginLeft: 15 }}>
-            <Text style={styles.header}>{header}</Text>
-            <Text style={styles.subHeader}>{subHeader}</Text>
+            <Text
+              style={[
+                styles.header,
+                { color: inoperable ? "white" : "#23396F" },
+              ]}
+            >
+              {header}
+            </Text>
+            <Text
+              style={[
+                styles.subHeader,
+                { color: inoperable ? "white" : "#808080" },
+              ]}
+            >
+              {subHeader}
+            </Text>
           </View>
         </View>
         <AntDesign style={styles.arrow} name="right" />
@@ -36,11 +57,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     margin: 5,
     padding: 10,
-    backgroundColor: "white",
   },
   header: {
     fontSize: 18,
-    color: "#23396F",
     fontWeight: "800",
     marginBottom: 5,
   },

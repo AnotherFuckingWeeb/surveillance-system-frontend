@@ -10,7 +10,7 @@ export const Welcome = ({
   return (
     <View style={styles.container}>
       <View style={{ alignItems: "center" }}>
-        <Image style={styles.image} source={Images.brandLogo} />
+        <Image style={styles.image} source={Images.logo} />
         <View style={{ padding: 5 }}>
           <Text style={styles.title}>Bienvenido</Text>
           <Text style={styles.description}>

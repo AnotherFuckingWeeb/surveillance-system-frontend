@@ -17,6 +17,9 @@ import { Camera } from "../screens/Camera";
 import { Users } from "../screens/Users";
 import { Splash } from "../screens/Splash";
 import { SucessAccount } from "../screens/SucessAccount";
+import { CreateReport } from "../screens/CreateReport";
+import { Reports } from "../screens/Reports";
+import { Report } from "../screens/Report";
 import { RootStackParamList } from "./types";
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -50,6 +53,9 @@ export const Route = () => {
         <Stack.Screen name="Users" component={Users} />
         <Stack.Screen name="SucessAccount" component={SucessAccount} />
         <Stack.Screen name="Camera" component={Camera} />
+        <Stack.Screen name="CreateReport" component={CreateReport} />
+        <Stack.Screen name="Reports" component={Reports} />
+        <Stack.Screen name="Report" component={Report} />
       </Stack.Navigator>
     </NavigationContainer>
   );

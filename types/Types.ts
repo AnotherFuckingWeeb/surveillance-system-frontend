@@ -14,6 +14,14 @@ export interface ICamera {
   description: string;
 }
 
+export interface IReport {
+  ID: number;
+  UID: number;
+  CreatedAt: string;
+  CreatedBy: string;
+  Description: string;
+}
+
 export interface IAuthResponse {
   message: string;
   token: string;

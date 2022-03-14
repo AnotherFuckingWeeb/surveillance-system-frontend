@@ -1,8 +1,14 @@
 import axios from "axios";
-import { IUser, ICamera, IAuthResponse, IUserInfo } from "../types/Types";
+import {
+  IUser,
+  ICamera,
+  IReport,
+  IAuthResponse,
+  IUserInfo,
+} from "../types/Types";
 import * as SecureStorage from "expo-secure-store";
 
-export const ROOT_URL: string = "http://192.168.0.101:8080";
+export const ROOT_URL: string = "http://192.168.0.110:8080";
 
 export const Login = async (
   dni: number,
@@ -66,6 +72,7 @@ export const GetUser = async (id: number): Promise<IUserInfo> => {
 
 export const CreateUser = async (
   dni: number,
+  role: number,
   name: string,
   lastname: string,
   password: string
@@ -76,6 +83,7 @@ export const CreateUser = async (
     `${ROOT_URL}/api/admin/user/`,
     {
       dni,
+      role,
       name,
       lastname,
       password,
@@ -240,4 +248,66 @@ export const UpdateCamera = async (
   );
 
   return response.data.message;
+};
+
+export const CreateReport = async (
+  uid: number,
+  createdBy: string,
+  description: string
+): Promise<string> => {
+  const token = await SecureStorage.getItemAsync("token");
+  const response = await axios.post(
+    `${ROOT_URL}/api/report/`,
+    {
+      uid,
+      createdBy,
+      description,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data.message;
+};
+
+export const GetReports = async (): Promise<IReport[]> => {
+  const token = await SecureStorage.getItemAsync("token");
+  const response = await axios.get(`${ROOT_URL}/api/admin/reports/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data.reports;
+};
+
+export const GetReportById = async (id: number): Promise<IReport> => {
+  const token = await SecureStorage.getItemAsync("token");
+  const response = await axios.get(`${ROOT_URL}/api/report`, {
+    params: {
+      id,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data.report;
+};
+
+export const GetReportsByUid = async (uid: number): Promise<any> => {
+  const token = await SecureStorage.getItemAsync("token");
+  const response = await axios.get(`${ROOT_URL}/api/reports`, {
+    params: {
+      uid,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data.reports;
 };

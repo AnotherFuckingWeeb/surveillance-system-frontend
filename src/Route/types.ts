@@ -15,6 +15,9 @@ export type RootStackParamList = {
   Cameras: { redirectTo: "manage" | "watch" };
   Users: undefined;
   SucessAccount: undefined;
+  CreateReport: undefined;
+  Reports: undefined;
+  Report: { id: number };
 };
 
 export type NavigationProps<T extends keyof RootStackParamList> = {

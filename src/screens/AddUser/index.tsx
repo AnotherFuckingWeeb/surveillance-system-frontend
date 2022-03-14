@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { ScrollView, View, Image, Text } from "react-native";
-import { useUser } from "../../context";
 import { Images } from "../../../assets";
 import { CustomInput } from "../../components/CustomInput";
 import { PrimaryButton } from "../../components/Button/PrimaryButton";
@@ -10,6 +9,7 @@ import { NavigationProps } from "../../Route/types";
 import { CreateUser } from "../../../axios";
 import { styles } from "./styles";
 import { IState } from "./IState";
+import SwitchSelector from "react-native-switch-selector";
 
 export const AddUser = ({
   route,
@@ -17,6 +17,7 @@ export const AddUser = ({
 }: NavigationProps<"AddUser">): JSX.Element => {
   const [state, setState] = useState<IState>({
     dni: "",
+    role: 0,
     name: "",
     lastname: "",
     password: "",
@@ -24,6 +25,17 @@ export const AddUser = ({
     loading: false,
     success: false,
   });
+
+  const switchOpts = [
+    {
+      label: "Administrador",
+      value: 1,
+    },
+    {
+      label: "Vigilante",
+      value: 0,
+    },
+  ];
 
   const onHandleSignUp = async (): Promise<void> => {
     setState({ ...state, loading: true });
@@ -47,6 +59,7 @@ export const AddUser = ({
     try {
       await CreateUser(
         parseInt(state.dni),
+        state.role,
         state.name,
         state.lastname,
         state.password
@@ -83,6 +96,17 @@ export const AddUser = ({
           message={state.message}
         />
       )}
+      <View style={{ margin: 5, width: "100%", padding: 10 }}>
+        <SwitchSelector
+          initial={state.role}
+          options={switchOpts.reverse()}
+          textColor="#23396F"
+          buttonColor="#23396F"
+          hasPadding
+          selectedColor="white"
+          onPress={(value) => setState({ ...state, role: value as number })}
+        />
+      </View>
       <View>
         <CustomInput
           label="Cedula de identidad"
